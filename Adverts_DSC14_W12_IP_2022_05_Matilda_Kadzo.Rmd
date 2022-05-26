@@ -1,0 +1,470 @@
+---
+title: "**Analysis on Advertisments**"
+author: "**Matilda Kadzo**"
+date: "25/05/2022"
+output: github_document
+---
+## Defining The Question
+
+A Kenyan entrepreneur has created an online cryptography course and would want to advertise it on her blog. She currently targets audiences originating from various countries. In the past, she ran adverts to advertise a related course on the same blog and collected data in the process. She would now like to employ your services as a Data Science Consultant to help her identify which individuals are most likely to click on her adverts.
+
+## Metric of Success
+
+To provide an accurate depiction of the people most likely to view the clients advertisements and provide recommendations to the client based on the results of the univariate and bivariate analysis conducted on the dataset.
+
+## Understanding the context
+
+Clicks on adverts can help you understand how appealing your advert is to people who see it. Highly targeted ads are more likely to receive clicks. This can help you gauge how enticing your advert is. In this case, it would help us know how many people would be interested in the online cryptography course through the number of clicks on our client's blog.
+
+## Experimental Design
+Steps taken:
+
+* Loading the dataset
+* Performing data cleaning
+* Exploratory Data Analysis
+* Conclusion and recommendation
+
+## Data Relevance
+* Daily Time Spent on Site - Time spent per day on the blog
+* Age - Age of the respondents
+* Area Income - Income Distribution of the respondents' area
+* Daily Internet Usage - How much internet is used on a daily
+* Ad Topic Line - Topic of the advert
+* City - City of respondents
+* Male - gender of respondents; 1 if male and 0 if female.
+* Country -country of respondents
+* Time stamp - the time the data is recorded
+* Clicked on Ad - whether the respondents click on the ads; 0 if they don't and 1 if they do.
+
+## Loading the Dataset
+
+```{r}
+advert <- read.csv("/home/binti/Downloads/R/advertising.csv")
+```
+
+### Previewing the top of our dataset
+
+```{r}
+head(advert)
+```
+### Previewing the tail of our dataset
+
+```{r}
+tail(advert)
+```
+### Dataset Columns
+```{r}
+names(advert)
+```
+
+## Cleaning Data
+
+Finding the total missing values in our dataset.
+```{r}
+colSums(is.na(advert))
+#There are no missing values in our dataset
+```
+
+Checking for duplicates across our rows.
+
+```{r}
+sum(advert[duplicated(advert),])
+
+#There are no duplicates in this dataset.
+```
+The dataset had neither missing values or any duplicated values
+
+
+## Exploring the dataset
+Checking the descriptive statistics of the dataset
+```{r}
+
+summary(advert)
+```
+Checking the structure of the dataframe
+```{r}
+str(advert)
+```
+
+## Checking for Outliers
+
+Checking for outliers in the dataset. These show a visual shape of our data distribution.
+
+```{r}
+boxplot(advert$Area.Income,
+        main ="Area Income",
+        col = "orange",
+        border  = 'brown',
+        horizontal = TRUE,
+        notch = TRUE)
+#There are a few outliers in the area income column.
+```
+```{r}
+boxplot(advert$Daily.Time.Spent.on.Site,
+        main ="Daily Time Spent on Site",
+        col = "orange",
+        border  = 'brown',
+        horizontal = TRUE,
+        notch = TRUE)
+#There are no outliers in the daily time spent on site column. 
+```
+```{r}
+boxplot(advert$Age,
+        main ="Age",
+        col = "orange",
+        border  = 'brown',
+        horizontal = TRUE,
+        notch = TRUE)
+#There are no outliers in the age column.
+```
+```{r}
+boxplot(advert$Daily.Internet.Usage,
+        main ="Daily Internet Usage",
+        col = "orange",
+        border  = 'brown',
+        horizontal = TRUE,
+        notch = TRUE)
+#There are no outliers in the daily internet usage column
+```
+
+## Exploratory Data Analysis
+
+### Univariate Analysis 
+
+#### Measures of Central Tendency
+
+**Mean of the numeric columns**
+
+```{r}
+colMeans(advert[sapply(advert,is.numeric)])
+```
+
+
+**Median of our numeric columns**
+
+```{r}
+ad_time_median <- median(advert$Daily.Time.Spent.on.Site)
+print(ad_time_median)
+```
+
+```{r}
+ad_age_median <- median(advert$Age)
+ad_age_median
+```
+
+```{r}
+ad_income_median <- median(advert$Area.Income)
+ad_income_median
+```
+
+```{r}
+ad_internet_usage_median <- median(advert$Daily.Internet.Usage)
+ad_internet_usage_median
+```
+**Mode of our numeric columns.**
+
+Let's create the mode function
+```{r}
+getmode <- function(v) {
+   uniqv <- unique(v)
+   uniqv[which.max(tabulate(match(v, uniqv)))]}
+```
+
+Finding the mode in the age column
+```{r}
+
+getmode(advert$Age)
+getmode(advert$Daily.Time.Spent.on.Site)
+getmode(advert$Area.Income)
+getmode(advert$Daily.Internet.Usage)
+getmode(advert$City)
+getmode(advert$Ad.Topic.Line)
+getmode(advert$Male)
+getmode(advert$Country)
+getmode(advert$Timestamp)
+
+```
+
+*Minimum values in the numeric columns*
+
+```{r}
+min(advert$Age)
+min(advert$Daily.Time.Spent.on.Site)
+min(advert$Area.Income)
+min(advert$Daily.Internet.Usage)
+```
+*Maximum values in the numeric columns*
+```{r}
+max(advert$Age)
+max(advert$Daily.Time.Spent.on.Site)
+max(advert$Area.Income)
+max(advert$Daily.Internet.Usage)
+
+```
+
+*Range in the numeric columns*
+```{r}
+range(advert$Age)
+range(advert$Daily.Time.Spent.on.Site)
+range(advert$Area.Income)
+range(advert$Daily.Internet.Usage)
+
+```
+
+*Summary*
+* The youngest respondent is 19 and the oldest 61 years of age.
+* The least time spent on her site is 32 minutes and the highest 91 minutes.
+* The lowest income earner among the respondents earns 13,996 while the highest earns 79,484.
+* Daily internet usage ranges from 104 - 269.
+
+
+
+*Quantiles in the columns*
+```{r}
+quantile(advert$Age)
+quantile(advert$Daily.Time.Spent.on.Site)
+quantile(advert$Area.Income)
+quantile(advert$Daily.Internet.Usage)
+```
+
+*Variance of the numeric columns.* 
+
+This shows how the data values are dispersed around the mean.
+```{r}
+var(advert$Age)
+var(advert$Daily.Time.Spent.on.Site)
+var(advert$Area.Income)
+var(advert$Daily.Internet.Usage)
+```
+
+Finding the standard deviation of the columns.
+```{r}
+sd(advert$Age)
+sd(advert$Daily.Time.Spent.on.Site)
+sd(advert$Area.Income)
+sd(advert$Daily.Internet.Usage)
+```
+
+#### Frequency Distribution
+
+requency Distribution in the age column
+
+```{r}
+table(advert$Age)
+# Most respondents fall between theage bracket 25-42. The age with the highest number of readers is 31 which has a total of 61 people in total.
+```
+
+#### Histogram
+
+Plotting histograms for the columns
+```{r}
+hist(advert$Age, col  = "Cyan")
+#Most respondents fall in the age bracket 25-40.
+```
+
+```{r}
+hist(advert$Area.Income, col = "Purple")
+#The respondents mostly earn between 50K - 70K
+```
+```{r}
+hist(advert$Daily.Time.Spent.on.Site, col = "gold")
+```
+
+```{r}
+hist(advert$Daily.Internet.Usage, col = "pink")
+```
+### Plotting count plots for Categorical data
+
+#### Countplots for categorical data were plotted and it was observed that:
+```{r}
+library(ggplot2)
+ggplot(advert, aes(x=Male)) + geom_bar(fill=rgb(0.4,0.1,0.5))
+
+```
+There were more male than female users that visited the site and clicked on the advert
+
+```{r}
+ggplot(advert, aes(x=factor(`Clicked.on.Ad`))) + geom_bar( fill=rgb(0.6,0.4,0.4))
+
+```
+The number of users that clicked the advert are equal to those that did not click on the advert.
+
+
+### Bivariate Analysis
+
+#### Ggplots
+
+
+
+```{r}
+
+library(ggplot2)
+
+ggplot(data = advert, aes(x = Area.Income, fill = Clicked.on.Ad))+
+        geom_histogram(bins  =20,col = "orange")+
+        labs(title = "Income Distribution", x = "Area Income", y= "Frequency", fill = "Clicked on Ad")+ scale_color_brewer(
+                palette = "Set1"
+        )
+```
+```{r}
+ggplot(data = advert, aes(x = Age, fill = Clicked.on.Ad))+
+        geom_histogram(bins  =20,col = "orange")+
+        labs(title = "Age Distribution", x = "Age", y= "Frequency", fill = "Clicked on Ad")+ scale_color_brewer(
+                palette = "Set1"
+        )
+```
+```{r}
+ggplot(data = advert, aes(x =Daily.Time.Spent.on.Site, fill = Clicked.on.Ad))+
+        geom_histogram(bins  =20,col = "orange")+
+        labs(title = "Daily Time Spent on Site", x = "Time Spent on Site", y= "Frequency", fill = "Clicked on Ad")+ scale_color_brewer(
+                palette = "Set1"
+        )
+```
+
+
+#### Covariance
+
+Covariance is a statistical representation of the degree to which two variables vary together.
+
+```{r}
+cov(advert$Age, advert$Daily.Time.Spent.on.Site)
+#There is a negative relationship between the age and the time spent on site which means as the age increases, the daily time spent on the site decreases. The opposite is true.
+```
+```{r}
+cov(advert$Age, advert$Daily.Internet.Usage)
+
+#There is a negative relationship between the age and the daily internet usage as well.
+```
+```{r}
+cov(advert$Area.Income,advert$Daily.Time.Spent.on.Site)
+
+#There is a strong positive relationship between the income and daily time spent on site variables. That goes to say that the higher the income, the more the time spent on site and the lower the income, the less the time spent on site.
+```
+```{r}
+cov(advert$Age,advert$Area.Income)
+#There is a negative correlation between the age and income variables.
+```
+
+
+#### Correlation matrix
+
+```{r}
+cor(advert$Age, advert$Daily.Time.Spent.on.Site)
+cor(advert$Age,advert$Daily.Internet.Usage)
+cor(advert$Area.Income,advert$Daily.Internet.Usage)
+cor(advert$Area.Income,advert$Daily.Time.Spent.on.Site)
+cor(advert$Age,advert$Area.Income)
+```
+```{r}
+cor(advert[, c("Age","Daily.Time.Spent.on.Site","Daily.Internet.Usage")])
+```
+
+
+```{r}
+cor(advert[,unlist(lapply(advert, is.numeric))])
+```
+*Plotting a correlation heatmap for the numerical variables*
+```{r}
+library(dplyr)
+library(MASS)
+library(ggcorrplot)
+```
+
+```{r}
+# Selecting the Numerical Variables of the dataset
+corr <- dplyr::select(advert,Age,Area.Income,Clicked.on.Ad,Daily.Internet.Usage,Daily.Time.Spent.on.Site,Male )
+```
+
+```{r}
+# Plotting the Correlation Heatmap
+library(ggcorrplot)
+ggcorrplot(cor(corr), hc.order = F,type = 
+"lower", lab = T,
+  ggtheme = ggplot2::theme_gray,
+  colors = c("#00798c", "violet", "#edae49"))
+```
+
+Here, it was noted noted that :
+
+There was a strong negative correlation between the Daily Internet usage and Clicked on Ad variables. This means that the higher ones income the less likely they are to click on the blog ads. The same can also be said for the Daily Time Spent on Site and Click on ad variables.
+
+The Click on Ad variable had a strong positive correlation with the Age Variable, the older users were more likely to click on the ad , as we observed above in our analysis.
+
+The clicked on ad variable was also strongly negatively correlated with the Area Income , where the higher ones income was the less likely they were to click on the ad.
+
+
+#### *Scatter Plots*
+
+Scatter plots are used when we want to see a graphical representation of two different variables. They show how the variables are correlated.
+
+Let's plot a scatter plot for age and daily time spent on site.
+
+```{r}
+ggplot(advert, aes(Area.Income,Age))+geom_point(aes(colour= factor(`Clicked.on.Ad`)))+
+  labs(title = "Scatter Plot of Age Distribution vs Area Income",
+       x = "Area Income",
+       y = "Age")
+```
+The scatter plot for the Area Income against Age showed that , majority of the users who did not click on the ad were the high income earners and many of these were aged between 20 and 40 years.
+
+
+Scatter plot for Income and Daily Internet Usage
+
+```{r}
+ggplot(advert, aes(Area.Income, Daily.Internet.Usage))+
+  geom_point(aes(colour= factor(`Clicked.on.Ad`)))+
+  labs(title = "Scatter Plot of Area Income vs Daily Internet Usage",
+       x = "Area Income",
+       y = "Daily Internet Usage")
+```
+Scatter Plot of Age Distribution vs Time Spent on Site
+
+```{r}
+ggplot(advert, aes(Age, Daily.Time.Spent.on.Site))+
+  geom_point(aes(colour= factor(`Clicked.on.Ad`)))+
+  labs(title = "Scatter Plot of Age Distribution vs Time Spent on Site",
+       x = "Age",
+       y = "Time Spent on Site")
+```
+Plotting the Age against Time spent on the site variable we see that the younger demographic are less tolerant to ads despite spending significant amounts of time on the site.
+
+The reason for this may be that younger people , are more tech savvy and therefore are more likely to detect ads and avoid them while using the internet compared to their older counterparts.
+
+
+Scatter plot for Income Distribution and Daily time spent on site.
+```{r}
+ggplot(advert, aes(Daily.Time.Spent.on.Site, Area.Income))+
+  geom_point(aes(colour= factor(`Clicked.on.Ad`)))+
+  labs(title = "Time spent on site vs Income",
+       x = "Daily Time Spent on Site",
+       y = "Income Distribution")
+```
+The people who were least likely to click on the ad were the higher income earners , this was despite the fact that they seemed to spend a over an hour a day on the site.
+
+The same sentiments can be echoed for the Usage , total internet usage per day, variable . When plotted against income we see that those who spend over 200 minutes online all day and earn more than 50,000 are the least likely to click on ads on the internet.
+
+
+Scatter plot for Age and Income Distribution
+```{r}
+ggplot(advert, aes(Age, Daily.Internet.Usage))+
+  geom_point(aes(colour= factor(`Clicked.on.Ad`)))+
+  labs(title = "Scatter Plot of Age Distribution vs Daily Usage",
+       x = "Age",
+       y = "Daily Usage")
+```
+
+
+## Conclusion and Recommendations
+
+* In analyzing this data it was deduced that:
+  * Older people, those over 35 were more likely to click on the course advert.
+  * The individuals earning higher salaries were more likely not to click on the advert.
+  * The probability that a consumer would click on the advert was 0.5.
+  * The more time users spent on the blog , the less likely they were to click on the advertisement.
+
+* Thus, given these observations I would recommend that:
+1. Focusing more on those earning a lower income i.e less than 60,000 would prove to be more beneficial as these consumers click on adverts more.
+
+2. Users who were aged over 35 should be targeted more, as they were more likely to click on the ad.
+
+3. Finally the users who spend less time on the site and on the internet in general would prove a better demographic for the ads.
